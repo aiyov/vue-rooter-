@@ -1902,6 +1902,20 @@ function once(fn) {
 /*  */
 
 var History = function History(router, base) {
+    console.log(router,base)
+
+    /*afterHooks: []
+    app : Vue {_uid: 0, _isVue: true, $options: {…}, _renderProxy: Proxy, _self: Vue, …}
+    apps:[Vue]
+    beforeHooks:[]
+    fallback:false
+    history: HashHistory {router: VueRouter, base: "", current: {…}, pending: null, ready: true, …}
+    matcher:{match: ƒ, addRoutes: ƒ}
+    mode:"hash"
+    options:{routes: Array(2)}
+    resolveHooks:[]
+    currentRoute:Object */
+
     this.router = router;
     this.base = normalizeBase(base);
     // start with a route object that stands for "nowhere"
@@ -1935,9 +1949,10 @@ History.prototype.onError = function onError(errorCb) {
 History.prototype.transitionTo = function transitionTo(location, onComplete, onAbort) {
     var this$1 = this;
 
-    var route = this.router.match(location, this.current);
+    var route = this.router.match(location, this.current); //匹配出要设置为当前的route。
+    console.log(onComplete) // history.setupListeners(); //设置监听事件。popstate 或者 hashchange
     this.confirmTransition(route, function () {
-        this$1.updateRoute(route);
+        this$1.updateRoute(route); //将当前路由设置为上一个，参数route设置为当前路由。
         onComplete && onComplete(route);
         this$1.ensureURL();
 
@@ -2553,6 +2568,23 @@ VueRouter.prototype.init = function init(app /* Vue component instance */) {
     this.app = app;
 
     var history = this.history;
+
+    console.log(this) //this 为 Vue-router对象
+
+    /*
+    afterHooks:[]
+    app:Vue {_uid: 0, _isVue: true, $options: {…}, _renderProxy: Proxy, _self: Vue, …}
+    apps:[Vue]
+    beforeHooks:[]
+    fallback:false
+    history: HashHistory {router: VueRouter, base: "", current: {…}, pending: null, ready: true, …}
+    matcher:{match: ƒ, addRoutes: ƒ}
+    mode:"hash"
+    options:{routes: Array(2)}
+    resolveHooks:[]
+    currentRoute:Object //当前路由 =》 fullPath:"/foo/2" hash:"" matched:[{…}] meta:{} name:"fo" params:{id: "2"} path:"/foo/2" query:{}
+    */                                                             /*||*/
+                                                                      /*所匹配的路由Map*/
 
     if (history instanceof HTML5History) {
         history.transitionTo(history.getCurrentLocation());
